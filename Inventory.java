@@ -53,11 +53,11 @@ public class Inventory {
 							invM.updateSellPrice(cmd[1], sp);
 						}
 						else {
-							System.out.println("Not valid..!");
+							System.out.println("Please re-enter a valid command...");
 						}
 					} catch(ArrayIndexOutOfBoundsException e) {
-						e.printStackTrace();
-						System.out.println("Not valid no of inputs..!");
+						//e.printStackTrace();
+						System.out.println("Please re-enter a valid command...");
 					}
 				}
 			}
@@ -85,7 +85,8 @@ public class Inventory {
 			qt= qt.add(BigDecimal.valueOf(quantity));
 			itemDtls.put("QT", qt);
 		} else {
-			System.out.println("Item does not exist in Inventory !!!");
+			System.out.println(itemName+" does not exist in Inventory...");
+			System.out.println("Please re-enter a valid item...");
 		}
 	}
 	
@@ -93,12 +94,25 @@ public class Inventory {
 		Map<String,BigDecimal> itemDtls= itemsMap.get(itemName);
 		if(itemDtls!=null) {
 			BigDecimal qt= (BigDecimal) itemDtls.get("QT");
-			qt= qt.subtract(BigDecimal.valueOf(quantity));
-			itemDtls.put("QT", qt);
-			calcProfit(itemDtls, quantity);
+			if(qt.compareTo(BigDecimal.ZERO)==0) {
+				System.out.println("No "+itemName+"(s) available in inventory...");
+				System.out.println("Please re-enter a valid command...");
+				return;
+			} 
 			
+			BigDecimal remqt= qt.subtract(BigDecimal.valueOf(quantity));
+			
+			if(remqt.compareTo(BigDecimal.ZERO)==-1) {
+				System.out.println("Only "+qt.intValue()+" "+itemName+"(s) available in inventory...");
+				System.out.println("Please re-enter a valid quantity...");
+				return;
+			} else {
+				itemDtls.put("QT", remqt);
+				calcProfit(itemDtls, quantity);
+			}
 		} else {
-			System.out.println("Item does not exist in Inventory !!!");
+			System.out.println("Item does not exist in Inventory...");
+			System.out.println("Please re-enter a valid item...");
 		}
 	}
 	
